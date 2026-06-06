@@ -1,0 +1,777 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>TJ Asset</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --r:#E3202B;--r2:#B01820;--r3:#FF4D57;
+  --ink:#0F0F0E;--ink2:#4A4A46;--ink3:#9A9A94;
+  --bg:#F2F1EE;--surf:#FFFFFF;--border:#E0DFD8;
+  --ok:#1A7A3C;--warn:#C05000;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.4}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ─── LOGIN ─── */
+#scLogin{align-items:center;justify-content:center;padding:24px;background:var(--r)}
+.login-wrap{width:100%;max-width:340px}
+.login-brand{text-align:center;margin-bottom:32px}
+.brand-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:16px;padding:10px 18px}
+.brand-badge .icon{width:36px;height:36px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.brand-badge .icon svg{width:20px;height:20px;fill:var(--r)}
+.brand-badge h1{color:#fff;font-size:16px;font-weight:800;letter-spacing:-.3px}
+.brand-badge span{color:rgba(255,255,255,.75);font-size:11px;display:block;margin-top:1px}
+.login-card{background:#fff;border-radius:20px;padding:24px;border:1.5px solid rgba(0,0,0,.06)}
+.login-card h2{font-size:18px;font-weight:800;margin-bottom:4px}
+.login-card p{font-size:13px;color:var(--ink3);margin-bottom:20px}
+.f-group{margin-bottom:14px}
+.f-group label{display:block;font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.f-group .inp-wrap{position:relative}
+.f-group .inp-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;fill:var(--ink3)}
+.f-group input{width:100%;padding:12px 12px 12px 38px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:var(--font);background:#FAFAFA;outline:none;color:var(--ink);transition:border .15s}
+.f-group input:focus{border-color:var(--r);background:#fff}
+.btn-login{width:100%;padding:14px;background:var(--r);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;font-family:var(--font);cursor:pointer;letter-spacing:-.2px;transition:opacity .15s;margin-top:4px}
+.btn-login:active{opacity:.85}
+.err{font-size:12px;color:var(--r);text-align:center;min-height:16px;margin-top:8px}
+.login-hint{text-align:center;font-size:11px;color:var(--ink3);margin-top:10px}
+
+/* ─── TOPBAR ─── */
+.topbar{background:var(--r);padding:0 14px;height:52px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;flex-shrink:0}
+.tb-back{width:36px;height:36px;border:none;background:rgba(255,255,255,.18);border-radius:9px;color:#fff;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font);font-weight:300}
+.tb-title{color:#fff;font-size:15px;font-weight:800;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
+.tb-right{display:flex;gap:6px}
+.tb-icon{width:36px;height:36px;border:none;background:rgba(255,255,255,.18);border-radius:9px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tb-icon svg{width:20px;height:20px;fill:#fff}
+
+/* ─── DASHBOARD ─── */
+#scDash{background:var(--bg)}
+.dash-hero{background:var(--r);padding:16px 16px 22px}
+.dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.dash-greet h2{color:#fff;font-size:18px;font-weight:800;letter-spacing:-.3px}
+.dash-greet p{color:rgba(255,255,255,.7);font-size:12px;margin-top:2px}
+.av{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.4);color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.kpi{background:rgba(255,255,255,.16);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.12)}
+.kpi-val{font-size:28px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1}
+.kpi-lbl{font-size:11px;color:rgba(255,255,255,.65);margin-top:5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.prog-wrap{background:rgba(255,255,255,.16);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.12)}
+.prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.prog-top span{font-size:12px;color:rgba(255,255,255,.7);font-weight:600}
+.prog-top strong{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.prog-track{height:6px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:#fff;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.prog-sub{font-size:11px;color:rgba(255,255,255,.55);margin-top:7px}
+
+.dash-body{padding:16px;flex:1}
+.search-wrap{background:var(--surf);border:1.5px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:8px;padding:10px 14px;margin-bottom:18px}
+.search-wrap svg{width:18px;height:18px;fill:var(--ink3);flex-shrink:0}
+.search-wrap input{border:none;outline:none;flex:1;font-size:14px;font-family:var(--font);background:transparent;color:var(--ink)}
+.search-wrap input::placeholder{color:var(--ink3)}
+.sec-hd{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.k-list{display:flex;flex-direction:column;gap:8px}
+.k-item{background:var(--surf);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid var(--border);transition:border-color .15s,transform .1s}
+.k-item:active{border-color:var(--r);transform:scale(.99)}
+.k-num{width:40px;height:40px;background:var(--r);border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0;letter-spacing:-.5px}
+.k-info{flex:1;min-width:0}
+.k-info h3{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
+.k-info p{font-size:12px;color:var(--ink3);margin-top:3px}
+.k-chevron{font-size:20px;color:var(--ink3);font-weight:300}
+.k-badge{background:#FFF0F0;color:#B01820;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;flex-shrink:0;letter-spacing:-.2px}
+
+/* ─── KORIDOR ─── */
+#scKoridor{background:var(--bg)}
+.h-list{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.h-item{background:var(--surf);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid var(--border);transition:border-color .15s}
+.h-item:active{border-color:var(--r)}
+.h-dot{width:10px;height:10px;border-radius:50%;background:var(--r);flex-shrink:0}
+.h-dot.empty{background:var(--border)}
+.h-info{flex:1;min-width:0}
+.h-info h3{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h-info p{font-size:12px;color:var(--ink3);margin-top:2px}
+.h-cnt{font-size:12px;color:var(--ink3);font-weight:600;flex-shrink:0}
+
+/* ─── HALTE ─── */
+#scHalte{background:var(--bg)}
+.halte-kpi{background:var(--surf);border-bottom:1.5px solid var(--border);padding:14px 20px;display:flex;gap:0}
+.hk{flex:1;text-align:center}
+.hk-val{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-1px}
+.hk-val.ok{color:var(--ok)}
+.hk-val.warn{color:var(--warn)}
+.hk-lbl{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.hk-div{width:1px;background:var(--border)}
+.fab-row{padding:12px 16px;display:flex;justify-content:flex-end}
+.fab{background:var(--r);color:#fff;border:none;border-radius:12px;padding:11px 20px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;display:flex;align-items:center;gap:7px;letter-spacing:-.2px;transition:opacity .15s}
+.fab:active{opacity:.85}
+.fab svg{width:17px;height:17px;fill:#fff}
+.p-list{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
+.p-card{background:var(--surf);border-radius:14px;border:1.5px solid var(--border);overflow:hidden}
+.p-main{padding:12px 14px;display:flex;align-items:center;gap:12px}
+.p-thumb{width:50px;height:50px;border-radius:11px;background:#F4F3F0;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.p-thumb img{width:100%;height:100%;object-fit:cover}
+.p-thumb svg{width:24px;height:24px;fill:var(--ink3)}
+.p-body{flex:1;min-width:0}
+.p-name{font-size:14px;font-weight:700;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-sub{font-size:12px;color:var(--ink3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-sn{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:3px;letter-spacing:.3px}
+.pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;flex-shrink:0;letter-spacing:-.1px}
+.pill.on{background:#E6F5EC;color:#1A7A3C}
+.pill.off{background:#FFF3E6;color:#C05000}
+.p-acts{border-top:1px solid var(--border);display:flex}
+.p-btn{flex:1;padding:10px;border:none;background:transparent;font-size:12px;font-weight:700;font-family:var(--font);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--ink3);transition:background .1s;letter-spacing:-.1px}
+.p-btn:active{background:var(--bg)}
+.p-btn.edit{color:#1565C0}
+.p-btn.del{color:#C62828}
+.p-btn svg{width:14px;height:14px;fill:currentColor}
+
+/* ─── FORM ─── */
+#scForm{background:var(--bg)}
+.f-body{padding:14px 16px;display:flex;flex-direction:column;gap:12px;padding-bottom:88px}
+.f-card{background:var(--surf);border-radius:14px;border:1.5px solid var(--border);overflow:hidden}
+.f-card-hd{padding:10px 14px 0;font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px}
+.f-row{padding:9px 14px;border-bottom:1px solid var(--border);position:relative}
+.f-row:last-child{border-bottom:none}
+.f-row label{font-size:11px;font-weight:700;color:var(--ink3);display:block;margin-bottom:4px;letter-spacing:.3px}
+.f-inp{width:100%;border:none;outline:none;font-size:14px;font-family:var(--font);color:var(--ink);background:transparent;padding:0}
+.f-inp::placeholder{color:var(--ink3)}
+.combo-wrap{position:relative}
+.combo-wrap .arr{position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:14px;color:var(--ink3);pointer-events:none}
+.sn-row{display:flex;align-items:center;gap:8px}
+.sn-row input{flex:1;border:none;outline:none;font-size:13px;font-family:var(--mono);color:var(--ink);background:transparent}
+.scan-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;font-family:var(--font);cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;white-space:nowrap;letter-spacing:-.1px;transition:opacity .15s}
+.scan-btn:active{opacity:.8}
+.scan-btn svg{width:15px;height:15px;fill:#fff}
+.stgl-row{display:flex;gap:8px;margin-top:2px}
+.stgl{flex:1;padding:9px 8px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;text-align:center;background:var(--bg);color:var(--ink3);transition:all .15s}
+.stgl.s-on{border-color:#1A7A3C;background:#E6F5EC;color:#1A7A3C}
+.stgl.s-off{border-color:#C05000;background:#FFF3E6;color:#C05000}
+.photo-zone{padding:12px 14px}
+.photo-box{width:100%;height:120px;border-radius:12px;background:var(--bg);border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;overflow:hidden;position:relative;transition:border-color .15s}
+.photo-box:hover{border-color:var(--ink3)}
+.photo-box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-box svg{width:26px;height:26px;fill:var(--ink3)}
+.photo-box span{font-size:12px;color:var(--ink3);font-weight:600}
+.photo-box input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.form-bar{position:fixed;bottom:0;left:0;right:0;padding:10px 16px 14px;background:var(--surf);border-top:1.5px solid var(--border);display:flex;gap:10px;z-index:60}
+.btn-save{flex:1;padding:13px;background:var(--r);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:800;font-family:var(--font);cursor:pointer;letter-spacing:-.2px;transition:opacity .15s}
+.btn-save:active{opacity:.85}
+.btn-cncl{padding:13px 16px;background:var(--surf);color:var(--ink3);border:1.5px solid var(--border);border-radius:11px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer}
+
+/* ─── DROPDOWN ─── */
+.opt-box{position:absolute;top:calc(100% + 2px);left:-14px;right:-14px;background:var(--surf);border:1.5px solid var(--border);border-radius:12px;z-index:70;box-shadow:0 8px 30px rgba(0,0,0,.1);max-height:170px;overflow-y:auto;display:none}
+.opt-it{padding:11px 14px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--border);font-family:var(--font)}
+.opt-it:last-child{border-bottom:none}
+.opt-it:active{background:var(--bg)}
+.opt-it.manual{color:var(--r);font-weight:700}
+
+/* ─── SCANNER ─── */
+#scScan{background:#000;align-items:center;justify-content:flex-start;padding-top:0}
+.scan-ui{width:100%;display:flex;flex-direction:column;align-items:center}
+.scan-topbar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(0,0,0,.6)}
+.scan-topbar span{color:#fff;font-size:14px;font-weight:700;font-family:var(--font)}
+.scan-topbar button{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);border-radius:8px;color:#fff;font-size:13px;font-weight:700;font-family:var(--font);padding:7px 14px;cursor:pointer;transition:background .15s}
+.scan-topbar button:active{background:rgba(255,255,255,.25)}
+.scan-vid-wrap{width:100%;position:relative;background:#000}
+#scanVideo{width:100%;display:block;max-height:60vh;object-fit:cover}
+.scan-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.scan-cut{width:220px;height:140px;border-radius:12px;border:2.5px solid #fff;position:relative;box-shadow:0 0 0 9999px rgba(0,0,0,.55)}
+.sc-c{position:absolute;width:22px;height:22px;border-color:var(--r3);border-style:solid}
+.sc-c.tl{top:-2px;left:-2px;border-width:4px 0 0 4px;border-radius:5px 0 0 0}
+.sc-c.tr{top:-2px;right:-2px;border-width:4px 4px 0 0;border-radius:0 5px 0 0}
+.sc-c.bl{bottom:-2px;left:-2px;border-width:0 0 4px 4px;border-radius:0 0 0 5px}
+.sc-c.br{bottom:-2px;right:-2px;border-width:0 4px 4px 0;border-radius:0 0 5px 0}
+.scan-line{position:absolute;left:8px;right:8px;height:2px;background:var(--r3);top:0;animation:scanline 2s linear infinite;border-radius:99px}
+@keyframes scanline{0%,100%{top:8px;opacity:1}49%{top:calc(100% - 8px);opacity:1}50%{top:calc(100% - 8px);opacity:0}51%{top:8px;opacity:0}}
+.scan-foot{width:100%;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:14px;background:rgba(0,0,0,.7)}
+.scan-hint{color:rgba(255,255,255,.7);font-size:13px;font-family:var(--font);font-weight:500}
+.scan-controls{display:flex;gap:12px;justify-content:center}
+.scan-ctrl-btn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:50%;width:56px;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:background .15s}
+.scan-ctrl-btn:active{background:rgba(255,255,255,.25)}
+.scan-ctrl-btn.flash-on{background:rgba(255,220,0,.25);border-color:rgba(255,220,0,.5)}
+.scan-ctrl-btn svg{width:22px;height:22px}
+.scan-ctrl-btn span{font-size:9px;font-family:var(--font);font-weight:700;letter-spacing:.3px}
+.scan-result-box{width:100%;background:rgba(39,180,96,.2);border:1.5px solid rgba(39,180,96,.6);border-radius:10px;padding:10px 14px;display:none;align-items:center;gap:8px}
+.scan-result-box.show{display:flex}
+.scan-result-box svg{width:18px;height:18px;fill:#27B460;flex-shrink:0}
+.scan-result-box span{font-family:var(--mono);font-size:13px;color:#27B460;font-weight:500;word-break:break-all}
+
+/* ─── MODALS ─── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:none;align-items:flex-end}
+.overlay.open{display:flex}
+.sheet{background:var(--surf);border-radius:20px 20px 0 0;padding:20px 20px 32px;width:100%}
+.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px}
+.sheet h3{font-size:16px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px}
+.sheet p{font-size:13px;color:var(--ink3);margin-bottom:18px}
+.pf-av{width:64px;height:64px;border-radius:50%;background:var(--r);color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.pf-name{text-align:center;font-size:17px;font-weight:800;letter-spacing:-.3px}
+.pf-nik{text-align:center;font-size:13px;color:var(--ink3);margin-top:2px;margin-bottom:20px}
+.btn-logout{width:100%;padding:13px;background:#FFF0F0;color:var(--r2);border:1.5px solid #FFCDD2;border-radius:11px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer}
+.btn-ghost{width:100%;padding:13px;background:transparent;color:var(--ink3);border:1.5px solid var(--border);border-radius:11px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;margin-top:8px}
+.btn-danger{width:100%;padding:13px;background:var(--r);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;margin-top:8px}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:600;z-index:400;opacity:0;transition:opacity .2s,transform .2s;white-space:nowrap;pointer-events:none;font-family:var(--font);letter-spacing:-.1px}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ─── EMPTY ─── */
+.empty{text-align:center;padding:44px 24px;color:var(--ink3)}
+.empty svg{width:44px;height:44px;fill:var(--border);margin-bottom:10px}
+.empty p{font-size:13px;font-weight:600}
+
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.k-item,.h-item,.p-card{animation:up .2s ease both}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="screen active" id="scLogin">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="brand-badge">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg></div>
+        <div><h1>TJ Asset</h1><span>TransJakarta Stock Opname</span></div>
+      </div>
+    </div>
+    <div class="login-card">
+      <h2>Masuk ke Sistem</h2>
+      <p>Gunakan NIK dan password Anda</p>
+      <div class="f-group">
+        <label>NIK Pegawai</label>
+        <div class="inp-wrap">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4-1.8 4-4s-1.3-4-4-4-4 1.8-4 4 1.3 4 4 4zm0 2c-2.7 0-8 1.4-8 4v2h16v-2c0-2.6-5.3-4-8-4z"/></svg>
+          <input type="text" id="inpNIK" placeholder="Masukkan NIK">
+        </div>
+      </div>
+      <div class="f-group">
+        <label>Password</label>
+        <div class="inp-wrap">
+          <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.8-2.2-5-5-5S7 3.2 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.7 1.4-3.1 3.1-3.1s3.1 1.4 3.1 3.1v2z"/></svg>
+          <input type="password" id="inpPass" placeholder="Password">
+        </div>
+      </div>
+      <button class="btn-login" onclick="doLogin()">Masuk</button>
+      <div class="err" id="errMsg"></div>
+    </div>
+    <div class="login-hint">Demo: NIK bebas · password: tj2024</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen" id="scDash">
+  <div class="dash-hero">
+    <div class="dash-top">
+      <div class="dash-greet"><h2>Selamat datang 👋</h2><p id="dName">—</p></div>
+      <div class="av" id="avBtn" onclick="openProfile()"></div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-val" id="sHalte">0</div><div class="kpi-lbl">Total Halte</div></div>
+      <div class="kpi"><div class="kpi-val" id="sPerangkat">0</div><div class="kpi-lbl">Total Perangkat</div></div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-top"><span>Progress Input Data</span><strong id="sPct">0%</strong></div>
+      <div class="prog-track"><div class="prog-fill" id="sProg" style="width:0"></div></div>
+      <div class="prog-sub"><span id="sIn">0</span> dari <span id="sTot">0</span> halte sudah terinput</div>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="srch" placeholder="Cari koridor…" oninput="filterK()">
+    </div>
+    <div class="sec-hd">Daftar Koridor</div>
+    <div class="k-list" id="kList"></div>
+  </div>
+</div>
+
+<!-- KORIDOR -->
+<div class="screen" id="scKoridor">
+  <div class="topbar">
+    <button class="tb-back" onclick="go('scDash')">‹</button>
+    <span class="tb-title" id="kTtl">Koridor</span>
+  </div>
+  <div class="h-list" id="hList"></div>
+</div>
+
+<!-- HALTE -->
+<div class="screen" id="scHalte">
+  <div class="topbar">
+    <button class="tb-back" id="htBack">‹</button>
+    <span class="tb-title" id="hTtl">Halte</span>
+  </div>
+  <div class="halte-kpi">
+    <div class="hk"><div class="hk-val" id="hTot">0</div><div class="hk-lbl">Total Aset</div></div>
+    <div class="hk-div"></div>
+    <div class="hk"><div class="hk-val ok" id="hOn">0</div><div class="hk-lbl">On Service</div></div>
+    <div class="hk-div"></div>
+    <div class="hk"><div class="hk-val warn" id="hOff">0</div><div class="hk-lbl">Off Service</div></div>
+  </div>
+  <div class="fab-row">
+    <button class="fab" onclick="openForm(null)">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      Tambah Perangkat
+    </button>
+  </div>
+  <div class="p-list" id="pList"></div>
+</div>
+
+<!-- FORM -->
+<div class="screen" id="scForm">
+  <div class="topbar">
+    <button class="tb-back" onclick="cancelForm()">✕</button>
+    <span class="tb-title" id="fTtl">Tambah Perangkat</span>
+  </div>
+  <div class="f-body">
+    <div class="f-card">
+      <div class="f-card-hd">Informasi Perangkat</div>
+      <div class="f-row" style="position:relative">
+        <label>Jenis Perangkat</label>
+        <div class="combo-wrap">
+          <input class="f-inp" type="text" id="fJenis" placeholder="Pilih atau ketik…" autocomplete="off" oninput="showDD('jenis',this.value)" onfocus="showDD('jenis','')">
+          <span class="arr">▾</span>
+        </div>
+        <div class="opt-box" id="ddJenis"></div>
+      </div>
+      <div class="f-row" style="position:relative">
+        <label>Nama Perangkat</label>
+        <div class="combo-wrap">
+          <input class="f-inp" type="text" id="fNama" placeholder="Pilih atau ketik…" autocomplete="off" oninput="showDD('nama',this.value)" onfocus="showDD('nama','')">
+          <span class="arr">▾</span>
+        </div>
+        <div class="opt-box" id="ddNama"></div>
+      </div>
+      <div class="f-row" style="position:relative">
+        <label>Merk / Model</label>
+        <div class="combo-wrap">
+          <input class="f-inp" type="text" id="fMerk" placeholder="Pilih atau ketik…" autocomplete="off" oninput="showDD('merk',this.value)" onfocus="showDD('merk','')">
+          <span class="arr">▾</span>
+        </div>
+        <div class="opt-box" id="ddMerk"></div>
+      </div>
+    </div>
+    <div class="f-card">
+      <div class="f-card-hd">Identifikasi & Status</div>
+      <div class="f-row">
+        <label>Serial Number</label>
+        <div class="sn-row">
+          <input type="text" id="fSN" placeholder="Ketik atau scan barcode…" style="border:none;outline:none;font-size:13px;font-family:var(--mono);color:var(--ink);background:transparent;flex:1">
+          <button class="scan-btn" onclick="openScanner()">
+            <svg viewBox="0 0 24 24"><path d="M2 7H4V5H6V3H2V7ZM2 17H2V21H6V19H4V17H2ZM18 5V3H22V7H20V5H18ZM20 17H22V21H18V19H20V17ZM17 7H7V17H17V7ZM15 15H9V9H15V15ZM11 13H13V11H11V13Z"/></svg>
+            Scan
+          </button>
+        </div>
+      </div>
+      <div class="f-row">
+        <label>Status</label>
+        <div class="stgl-row">
+          <div class="stgl s-on" id="stgOn" onclick="setSt('on')">✓ On Service</div>
+          <div class="stgl" id="stgOff" onclick="setSt('off')">✗ Off Service</div>
+        </div>
+      </div>
+    </div>
+    <div class="f-card">
+      <div class="f-card-hd">Foto Perangkat</div>
+      <div class="photo-zone">
+        <div class="photo-box" id="pBox">
+          <svg viewBox="0 0 24 24"><path d="M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4z"/><path d="M9 3L7.17 5H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2h-3.17L15 3H9zm3 15a5 5 0 110-10 5 5 0 010 10z"/></svg>
+          <span id="pLbl">Ketuk untuk foto perangkat</span>
+          <input type="file" accept="image/*" capture="environment" id="pInp" onchange="handlePic(this)">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="form-bar">
+    <button class="btn-cncl" onclick="cancelForm()">Batal</button>
+    <button class="btn-save" onclick="saveP()">Simpan Data</button>
+  </div>
+</div>
+
+<!-- SCANNER -->
+<div class="screen" id="scScan">
+  <div class="scan-ui">
+    <div class="scan-topbar">
+      <span>Scan Barcode / QR Code</span>
+      <button onclick="closeScanner()">✕ Tutup</button>
+    </div>
+    <div class="scan-vid-wrap">
+      <video id="scanVid" playsinline muted autoplay></video>
+      <div class="scan-overlay">
+        <div class="scan-cut">
+          <div class="sc-c tl"></div><div class="sc-c tr"></div>
+          <div class="sc-c bl"></div><div class="sc-c br"></div>
+          <div class="scan-line"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scan-foot">
+      <div class="scan-result-box" id="scanResult">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+        <span id="scanResultTxt"></span>
+      </div>
+      <p class="scan-hint">Arahkan kamera ke barcode atau QR Code</p>
+      <div class="scan-controls">
+        <div class="scan-ctrl-btn" id="flashBtn" onclick="toggleFlash()">
+          <svg id="flashIco" viewBox="0 0 24 24" style="fill:#FFD700"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+          <span style="color:#FFD700;font-family:var(--font)">FLASH</span>
+        </div>
+        <div class="scan-ctrl-btn" onclick="switchCamera()">
+          <svg viewBox="0 0 24 24" style="fill:#fff"><path d="M20 5h-3.17L15 3H9L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
+          <span style="color:#fff;font-family:var(--font)">BALIK</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE SHEET -->
+<div class="overlay" id="pfOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="pf-av" id="pfAv"></div>
+    <div class="pf-name" id="pfName">—</div>
+    <div class="pf-nik" id="pfNik">NIK: —</div>
+    <button class="btn-logout" onclick="doLogout()">Keluar / Logout</button>
+    <button class="btn-ghost" onclick="closePf()">Tutup</button>
+  </div>
+</div>
+
+<!-- DELETE SHEET -->
+<div class="overlay" id="delOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 style="color:#C62828">Hapus Perangkat?</h3>
+    <p id="delDesc">Data ini akan dihapus permanen dan tidak dapat dikembalikan.</p>
+    <button class="btn-danger" onclick="confirmDel()">Ya, Hapus Sekarang</button>
+    <button class="btn-ghost" onclick="closeDel()">Batal</button>
+  </div>
+</div>
+
+<div class="toast" id="tst"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+const DB_USERS=[{nik:'admin',pw:'tj2024',name:'Admin TransJakarta'},{nik:'12345',pw:'tj2024',name:'Operator Lapangan'}];
+const KORIDORS=[
+  {id:'1',no:'1',name:'Blok M – Kota'},{id:'2',no:'2',name:'Pulogadung – Harmoni'},
+  {id:'3',no:'3',name:'Pasar Baru – Kalideres'},{id:'4',no:'4',name:'Pulogadung – Dukuh Atas'},
+  {id:'5',no:'5',name:'Kampung Melayu – Ancol'},{id:'6',no:'6',name:'Ragunan – Dukuh Atas'},
+  {id:'7',no:'7',name:'Kampung Rambutan – Kampung Melayu'},{id:'8',no:'8',name:'Lebak Bulus – Harmoni'},
+  {id:'9',no:'9',name:'Pinang Ranti – Pluit'},{id:'10',no:'10',name:'Tanjung Priok – Cililitan'},
+];
+const HALTES={
+  '1':['Blok M','Masjid Agung','Bundaran Senayan','GBK','Polda Metro Jaya','Karet','Dukuh Atas','Tosari','Bundaran HI','Sarinah','Monas','Harmoni','Sawah Besar','Mangga Besar','Olimo','Glodok','Kota'],
+  '2':['Pulogadung','Bermis','Penggilingan','Cakung','Rawa Terate','Jelambar','Grogol','Slipi Petamburan','Harmoni'],
+  '3':['Pasar Baru','Budi Kemuliaan','Cideng','Tanah Abang','Slipi Kemanggisan','Jelambar','Kalideres'],
+  '4':['Pulogadung','Rawamangun','Utan Kayu','Pasar Rumput','Dukuh Atas'],
+  '5':['Kampung Melayu','Bidaracina','Cipinang Besar','Pulomas','Ancol'],
+  '6':['Ragunan','Duren Barat','Buncit Indah','Warung Jati','Pejaten','Pancoran','Cikoko','Cawang','Dukuh Atas'],
+  '7':['Kampung Rambutan','Cijantung','Cililitan','Otista','Kampung Melayu'],
+  '8':['Lebak Bulus','Pondok Indah','Puri Mutiara','Permata Hijau','Harmoni'],
+  '9':['Pinang Ranti','Cawang','Manggarai','Matraman','Pluit'],
+  '10':['Tanjung Priok','Warakas','Plumpang','Rawa Badak','Papanggo','Cililitan'],
+};
+const JENIS=['CCTV','DVR/NVR','Panel Informasi','Mesin Tap','Display LED','Speaker/PA','Sensor Pintu','PC/Komputer','Router/Switch','UPS','HVAC Controller','Gate Barrier'];
+const NAMA=['CCTV Outdoor','CCTV Indoor','DVR 16Ch','NVR IP','TVM Tiket','E-Gate','Running Text','Video Wall','Interphone','ACS Controller'];
+const MERK=['Hikvision','Dahua','Samsung','Panasonic','Sony','Axis','Bosch','Hanwha','Uniview','TVT Digital','ZKTeco','Suprema'];
+
+let S={user:null,koridor:null,halte:null,status:'on',photo:null,editIdx:null,delIdx:null,stream:null,flashOn:false,camFacing:'environment'};
+let PDB=JSON.parse(localStorage.getItem('tjv2')||'{}');
+const saveDB=()=>localStorage.setItem('tjv2',JSON.stringify(PDB));
+const go=id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')};
+const toast=(m,d=2200)=>{const t=document.getElementById('tst');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)};
+
+function doLogin(){
+  const nik=document.getElementById('inpNIK').value.trim();
+  const pw=document.getElementById('inpPass').value;
+  if(!pw){document.getElementById('errMsg').textContent='Masukkan password';return;}
+  const u=DB_USERS.find(x=>x.nik===nik&&x.pw===pw)||(pw==='tj2024'&&nik?{nik,name:'Operator '+nik}:null);
+  if(!u){document.getElementById('errMsg').textContent='NIK atau password salah';return;}
+  S.user=u;
+  document.getElementById('errMsg').textContent='';
+  buildDash();go('scDash');
+}
+
+function buildDash(){
+  const u=S.user;
+  document.getElementById('dName').textContent=u.name+' · '+u.nik;
+  const ini=u.name[0].toUpperCase();
+  document.getElementById('avBtn').textContent=ini;
+  document.getElementById('pfAv').textContent=ini;
+  document.getElementById('pfName').textContent=u.name;
+  document.getElementById('pfNik').textContent='NIK: '+u.nik;
+  let totH=0,withD=0,totP=0;
+  KORIDORS.forEach(k=>(HALTES[k.id]||[]).forEach(h=>{totH++;const a=PDB[k.id+'_'+h]||[];totP+=a.length;if(a.length)withD++;}));
+  document.getElementById('sHalte').textContent=totH;
+  document.getElementById('sPerangkat').textContent=totP;
+  document.getElementById('sTot').textContent=totH;
+  document.getElementById('sIn').textContent=withD;
+  const pct=totH?Math.round(withD/totH*100):0;
+  document.getElementById('sPct').textContent=pct+'%';
+  document.getElementById('sProg').style.width=pct+'%';
+  renderKList('');
+}
+
+function renderKList(q){
+  q=q.toLowerCase();
+  const el=document.getElementById('kList');
+  const items=KORIDORS.filter(k=>!q||k.name.toLowerCase().includes(q)||('koridor '+k.no).includes(q));
+  el.innerHTML=items.map(k=>{
+    const hs=HALTES[k.id]||[];let cnt=0;
+    hs.forEach(h=>{cnt+=(PDB[k.id+'_'+h]||[]).length;});
+    return`<div class="k-item" onclick="openK('${k.id}')">
+      <div class="k-num">${k.no}</div>
+      <div class="k-info"><h3>${k.name}</h3><p>${hs.length} halte · ${cnt} perangkat</p></div>
+      <span class="k-chevron">›</span>
+    </div>`;
+  }).join('')||'<div class="empty"><p>Tidak ditemukan</p></div>';
+}
+const filterK=()=>renderKList(document.getElementById('srch').value);
+
+function openK(id){
+  const k=KORIDORS.find(x=>x.id===id);S.koridor=k;
+  document.getElementById('kTtl').textContent='Koridor '+k.no+' — '+k.name;
+  const hs=HALTES[id]||[];
+  document.getElementById('hList').innerHTML=hs.map(h=>{
+    const a=PDB[id+'_'+h]||[];
+    return`<div class="h-item" onclick="openH('${id}','${h}')">
+      <div class="h-dot${a.length?'':' empty'}"></div>
+      <div class="h-info"><h3>${h}</h3><p>${a.length} perangkat tercatat</p></div>
+      <span class="h-cnt">${a.length} &rsaquo;</span>
+    </div>`;
+  }).join('');
+  go('scKoridor');
+}
+
+function openH(kId,hName){
+  S.halte={kId,hName};
+  document.getElementById('hTtl').textContent=hName;
+  document.getElementById('htBack').onclick=()=>go('scKoridor');
+  renderHalte();go('scHalte');
+}
+
+function renderHalte(){
+  const{kId,hName}=S.halte;const key=kId+'_'+hName;
+  const a=PDB[key]||[];const on=a.filter(x=>x.status==='on').length;
+  document.getElementById('hTot').textContent=a.length;
+  document.getElementById('hOn').textContent=on;
+  document.getElementById('hOff').textContent=a.length-on;
+  const el=document.getElementById('pList');
+  if(!a.length){el.innerHTML='<div class="empty"><svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.54 15.46 0 12.33 0c-1.65 0-3.12.72-4.13 1.86L6 4 4.67 2.67 3.5 3.84 20.16 20.5 21.33 19.33 20 18V6zm-8 11a3 3 0 01-3-3c0-.35.07-.68.18-1h-1.7L4 9.46V18c0 1.1.9 2 2 2h10.54l-2-2H12zm8-3.46V8h-7.92l7.92 7.92V13.54z"/></svg><p>Belum ada perangkat dicatat.<br>Ketuk Tambah untuk mulai.</p></div>';return;}
+  el.innerHTML=a.map((p,i)=>{
+    const ph=p.photo?`<img src="${p.photo}" alt="">`:`<svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>`;
+    return`<div class="p-card">
+      <div class="p-main">
+        <div class="p-thumb">${ph}</div>
+        <div class="p-body"><div class="p-name">${p.nama||p.jenis||'Perangkat'}</div><div class="p-sub">${p.jenis}${p.merk?' · '+p.merk:''}</div><div class="p-sn">S/N: ${p.sn||'—'}</div></div>
+        <div class="pill ${p.status==='on'?'on':'off'}">${p.status==='on'?'On':'Off'}</div>
+      </div>
+      <div class="p-acts">
+        <button class="p-btn edit" onclick="openForm(${i})"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> Edit</button>
+        <div style="width:1px;background:var(--border)"></div>
+        <button class="p-btn del" onclick="openDel(${i})"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Hapus</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openForm(idx){
+  S.editIdx=idx;S.photo=null;
+  document.getElementById('fTtl').textContent=idx===null?'Tambah Perangkat':'Edit Perangkat';
+  const{kId,hName}=S.halte;const a=PDB[kId+'_'+hName]||[];
+  if(idx!==null&&a[idx]){
+    const p=a[idx];
+    document.getElementById('fJenis').value=p.jenis||'';
+    document.getElementById('fNama').value=p.nama||'';
+    document.getElementById('fMerk').value=p.merk||'';
+    document.getElementById('fSN').value=p.sn||'';
+    setSt(p.status||'on');S.photo=p.photo||null;
+  }else{
+    ['fJenis','fNama','fMerk','fSN'].forEach(id=>document.getElementById(id).value='');
+    setSt('on');document.getElementById('pInp').value='';
+  }
+  updatePic();go('scForm');
+}
+const cancelForm=()=>go('scHalte');
+const setSt=s=>{S.status=s;document.getElementById('stgOn').className='stgl'+(s==='on'?' s-on':'');document.getElementById('stgOff').className='stgl'+(s==='off'?' s-off':'');};
+
+function saveP(){
+  const jenis=document.getElementById('fJenis').value.trim();
+  if(!jenis){toast('Pilih jenis perangkat terlebih dahulu');return;}
+  const{kId,hName}=S.halte;const key=kId+'_'+hName;
+  if(!PDB[key])PDB[key]=[];
+  const obj={jenis,nama:document.getElementById('fNama').value.trim(),merk:document.getElementById('fMerk').value.trim(),sn:document.getElementById('fSN').value.trim(),status:S.status,photo:S.photo,ts:Date.now()};
+  S.editIdx!==null?PDB[key][S.editIdx]=obj:PDB[key].push(obj);
+  saveDB();toast(S.editIdx!==null?'Data diperbarui ✓':'Perangkat ditambahkan ✓');
+  renderHalte();buildDash();go('scHalte');
+}
+
+function handlePic(inp){
+  if(!inp.files||!inp.files[0])return;
+  const reader=new FileReader();const img=new Image();
+  reader.onload=e=>{
+    img.onload=()=>{
+      const c=document.createElement('canvas');const max=900;
+      let w=img.width,h=img.height;
+      if(w>max){h=h*max/w;w=max;}
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      S.photo=c.toDataURL('image/jpeg',.7);
+      updatePic();toast('Foto siap (terkompresi) ✓');
+    };img.src=e.target.result;
+  };reader.readAsDataURL(inp.files[0]);
+}
+function updatePic(){
+  const b=document.getElementById('pBox'),l=document.getElementById('pLbl');
+  let im=b.querySelector('img');
+  if(S.photo){
+    if(!im){im=document.createElement('img');b.appendChild(im);}
+    im.src=S.photo;im.style.display='block';
+    b.querySelector('svg').style.display='none';l.style.display='none';
+  }else{
+    if(im)im.style.display='none';
+    b.querySelector('svg').style.display='';l.style.display='';
+  }
+}
+
+/* ─── DROPDOWN ─── */
+function showDD(type,val){
+  const map={jenis:{box:'ddJenis',inp:'fJenis',opts:JENIS},nama:{box:'ddNama',inp:'fNama',opts:NAMA},merk:{box:'ddMerk',inp:'fMerk',opts:MERK}};
+  const{box,opts}=map[type];const el=document.getElementById(box);
+  const f=opts.filter(o=>!val||o.toLowerCase().includes(val.toLowerCase()));
+  el.innerHTML=f.map(o=>`<div class="opt-it" onmousedown="pickDD('${type}','${o.replace(/'/g,"\\'")}')">${o}</div>`).join('')+
+    (val&&!opts.find(o=>o.toLowerCase()===val.toLowerCase())?`<div class="opt-it manual" onmousedown="pickDD('${type}','${val.replace(/'/g,"\\'")}')">+ Gunakan "${val}"</div>`:'');
+  el.style.display=(f.length||val)?'block':'none';
+  Object.keys(map).filter(t=>t!==type).forEach(t=>document.getElementById(map[t].box).style.display='none');
+}
+function pickDD(type,val){
+  const ids={jenis:'fJenis',nama:'fNama',merk:'fMerk'};
+  document.getElementById(ids[type]).value=val;
+  setTimeout(()=>document.getElementById({jenis:'ddJenis',nama:'ddNama',merk:'ddMerk'}[type]).style.display='none',80);
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.combo-wrap')&&!e.target.closest('.opt-box'))
+    ['ddJenis','ddNama','ddMerk'].forEach(id=>document.getElementById(id).style.display='none');
+});
+
+/* ─── SCANNER (HD + Flash) ─── */
+let scanRAF=null;
+async function openScanner(){
+  go('scScan');
+  S.flashOn=false;
+  document.getElementById('flashBtn').className='scan-ctrl-btn';
+  document.getElementById('scanResult').classList.remove('show');
+  document.getElementById('scanResultTxt').textContent='';
+  await startCam(S.camFacing);
+}
+
+async function startCam(facing){
+  stopCam();
+  const constraints={
+    video:{
+      facingMode:{ideal:facing},
+      width:{ideal:1920},height:{ideal:1080},
+      focusMode:{ideal:'continuous'},
+      exposureMode:{ideal:'continuous'},
+      whiteBalanceMode:{ideal:'continuous'}
+    }
+  };
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia(constraints);
+    S.stream=stream;
+    const v=document.getElementById('scanVid');
+    v.srcObject=stream;
+    await v.play();
+    if(typeof jsQR!=='undefined')scanLoop();
+    else{
+      const s2=document.createElement('script');
+      s2.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+      s2.onload=()=>scanLoop();
+      document.head.appendChild(s2);
+    }
+  }catch(err){toast('Kamera tidak dapat diakses');go('scForm');}
+}
+
+function scanLoop(){
+  const v=document.getElementById('scanVid');
+  if(!S.stream){return;}
+  if(v.readyState>=2){
+    const c=document.createElement('canvas');
+    c.width=v.videoWidth;c.height=v.videoHeight;
+    const ctx=c.getContext('2d');
+    ctx.filter='brightness(1.15) contrast(1.1)';
+    ctx.drawImage(v,0,0);
+    const img=ctx.getImageData(0,0,c.width,c.height);
+    if(typeof jsQR!=='undefined'){
+      const code=jsQR(img.data,img.width,img.height,{inversionAttempts:'attemptBoth'});
+      if(code&&code.data){
+        document.getElementById('fSN').value=code.data;
+        const rb=document.getElementById('scanResult');
+        document.getElementById('scanResultTxt').textContent=code.data;
+        rb.classList.add('show');
+        setTimeout(()=>{closeScanner();toast('Kode terdeteksi: '+code.data.substring(0,30));},800);
+        return;
+      }
+    }
+  }
+  scanRAF=requestAnimationFrame(scanLoop);
+}
+
+function stopCam(){
+  if(scanRAF){cancelAnimationFrame(scanRAF);scanRAF=null;}
+  if(S.stream){S.stream.getTracks().forEach(t=>t.stop());S.stream=null;}
+}
+
+function closeScanner(){
+  stopCam();S.flashOn=false;go('scForm');
+}
+
+async function toggleFlash(){
+  if(!S.stream)return;
+  const track=S.stream.getVideoTracks()[0];
+  if(!track)return;
+  try{
+    S.flashOn=!S.flashOn;
+    await track.applyConstraints({advanced:[{torch:S.flashOn}]});
+    const btn=document.getElementById('flashBtn');
+    btn.className='scan-ctrl-btn'+(S.flashOn?' flash-on':'');
+    toast(S.flashOn?'Flash ON 💡':'Flash OFF');
+  }catch(e){
+    toast('Flash tidak didukung perangkat ini');S.flashOn=false;
+  }
+}
+
+async function switchCamera(){
+  S.camFacing=S.camFacing==='environment'?'user':'environment';
+  S.flashOn=false;
+  await startCam(S.camFacing);
+  toast(S.camFacing==='environment'?'Kamera belakang':'Kamera depan');
+}
+
+/* ─── PROFILE & MODALS ─── */
+const openProfile=()=>document.getElementById('pfOverlay').classList.add('open');
+const closePf=()=>document.getElementById('pfOverlay').classList.remove('open');
+function doLogout(){
+  closePf();S.user=null;
+  document.getElementById('inpNIK').value='';
+  document.getElementById('inpPass').value='';
+  go('scLogin');
+}
+const openDel=i=>{S.delIdx=i;document.getElementById('delOverlay').classList.add('open');};
+const closeDel=()=>document.getElementById('delOverlay').classList.remove('open');
+function confirmDel(){
+  const{kId,hName}=S.halte;const key=kId+'_'+hName;
+  PDB[key].splice(S.delIdx,1);saveDB();
+  closeDel();renderHalte();buildDash();toast('Perangkat dihapus');
+}
+document.getElementById('pfOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closePf();});
+document.getElementById('delOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeDel();});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('scLogin').classList.contains('active'))doLogin();});
+</script>
+</body>
+</html>
