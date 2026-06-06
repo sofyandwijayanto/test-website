@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>TJ StockOpname</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    :root {
+      --tj: rgb(227, 32, 43);
+      --tj2: rgb(180, 20, 30);
+      --bg: #F7F7F5;
+      --surface: #fff;
+      --border: #E5E5E0;
+      --text: #1A1A18;
+      --muted: #7A7A74;
+      --hint: #AFAFAA;
+      --success: #2E7D32;
+      --warn: #E65100;
+      --radius: 14px;
+      --radS: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-size: 15px
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column
+    }
+
+    .screen.active {
+      display: flex
+    }
+
+    /* LOGIN */
+    #scLogin {
+      background: var(--tj);
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1.5rem
+    }
+
+    .login-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2)
+    }
+
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.75rem
+    }
+
+    .login-logo .logo-box {
+      width: 42px;
+      height: 42px;
+      background: var(--tj);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .login-logo .logo-box svg {
+      width: 24px;
+      height: 24px;
+      fill: #fff
+    }
+
+    .login-logo h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2
+    }
+
+    .login-logo span {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .field {
+      margin-bottom: 1rem
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radS);
+      font-size: 15px;
+      background: #FAFAFA;
+      outline: none;
+      transition: border .15s
+    }
+
+    .field input:focus {
+      border-color: var(--tj);
+      background: #fff
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: var(--tj);
+      color: #fff;
+      border: none;
+      border-radius: var(--radS);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: .5rem;
+      transition: opacity .15s
+    }
+
+    .btn-login:active {
+      opacity: .85
+    }
+
+    .err-msg {
+      font-size: 13px;
+      color: var(--tj);
+      text-align: center;
+      margin-top: .75rem;
+      min-height: 18px
+    }
+
+    /* TOP BAR */
+    .topbar {
+      background: var(--tj);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
+
+    .topbar .back-btn {
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: rgba(255, 255, 255, .2);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0
+    }
+
+    .topbar h2 {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .topbar .topbar-right {
+      display: flex;
+      gap: 8px
+    }
+
+    /* DASHBOARD */
+    #scDash {
+      background: var(--bg)
+    }
+
+    .dash-header {
+      background: var(--tj);
+      padding: 16px 16px 20px
+    }
+
+    .dash-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px
+    }
+
+    .dash-top .user-info h2 {
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700
+    }
+
+    .dash-top .user-info p {
+      color: rgba(255, 255, 255, .75);
+      font-size: 13px
+    }
+
+    .dash-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      border: 2px solid rgba(255, 255, 255, .4)
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 0
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, .18);
+      border-radius: 12px;
+      padding: 12px 14px;
+      backdrop-filter: blur(4px)
+    }
+
+    .stat-card .s-val {
+      color: #fff;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1
+    }
+
+    .stat-card .s-lbl {
+      color: rgba(255, 255, 255, .75);
+      font-size: 11px;
+      margin-top: 4px;
+      font-weight: 500
+    }
+
+    .progress-card {
+      background: rgba(255, 255, 255, .18);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      backdrop-filter: blur(4px)
+    }
+
+    .progress-card .pc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px
+    }
+
+    .progress-card .pc-top span {
+      color: rgba(255, 255, 255, .85);
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    .progress-card .pc-top strong {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800
+    }
+
+    .prog-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, .25);
+      border-radius: 99px;
+      overflow: hidden
+    }
+
+    .prog-fill {
+      height: 100%;
+      background: #fff;
+      border-radius: 99px;
+      transition: width .5s ease
+    }
+
+    .dash-body {
+      padding: 16px
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      gap: 8px;
+      margin-bottom: 16px
+    }
+
+    .search-box svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--hint);
+      flex-shrink: 0
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 14px;
+      background: transparent;
+      color: var(--text)
+    }
+
+    .search-box input::placeholder {
+      color: var(--hint)
+    }
+
+    .sec-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 10px
+    }
+
+    .koridor-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .koridor-item {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      transition: border-color .15s, box-shadow .15s
+    }
+
+    .koridor-item:active {
+      border-color: var(--tj);
+      box-shadow: 0 2px 12px rgba(227, 32, 43, .12)
+    }
+
+    .koridor-num {
+      width: 38px;
+      height: 38px;
+      background: var(--tj);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      flex-shrink: 0
+    }
+
+    .koridor-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .koridor-info h3 {
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .koridor-info p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .koridor-arrow {
+      color: var(--hint);
+      font-size: 18px
+    }
+
+    /* KORIDOR DETAIL */
+    #scKoridor {
+      background: var(--bg)
+    }
+
+    .halte-list {
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .halte-item {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      transition: border-color .15s
+    }
+
+    .halte-item:active {
+      border-color: var(--tj)
+    }
+
+    .halte-icon {
+      width: 36px;
+      height: 36px;
+      background: #FFF0F0;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0
+    }
+
+    .halte-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--tj)
+    }
+
+    .halte-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .halte-info h3 {
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .halte-info p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .halte-badge {
+      background: #FFF0F0;
+      color: var(--tj);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 99px;
+      flex-shrink: 0
+    }
+
+    /* HALTE DETAIL */
+    #scHalte {
+      background: var(--bg)
+    }
+
+    .halte-stat-bar {
+      background: #fff;
+      padding: 14px 16px;
+      border-bottom: 1.5px solid var(--border);
+      display: flex;
+      gap: 10px
+    }
+
+    .h-stat {
+      flex: 1;
+      text-align: center
+    }
+
+    .h-stat .hv {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text)
+    }
+
+    .h-stat .hl {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 2px
+    }
+
+    .h-stat .hv.on {
+      color: var(--success)
+    }
+
+    .h-stat .hv.off {
+      color: var(--warn)
+    }
+
+    .h-stat-div {
+      width: 1px;
+      background: var(--border);
+      margin: 4px 0
+    }
+
+    .fab-area {
+      padding: 12px 16px 0;
+      display: flex;
+      justify-content: flex-end
+    }
+
+    .fab {
+      background: var(--tj);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 11px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 4px 16px rgba(227, 32, 43, .3);
+      transition: opacity .15s
+    }
+
+    .fab:active {
+      opacity: .85
+    }
+
+    .fab svg {
+      width: 18px;
+      height: 18px;
+      fill: #fff
+    }
+
+    .perangkat-list {
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .perangkat-card {
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      overflow: hidden
+    }
+
+    .pc-main {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .pc-photo {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: #F0F0EC;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .pc-photo svg {
+      width: 26px;
+      height: 26px;
+      fill: var(--hint)
+    }
+
+    .pc-photo img {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      object-fit: cover
+    }
+
+    .pc-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .pc-info .pname {
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .pc-info .psub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .pc-info .psn {
+      font-size: 11px;
+      color: var(--hint);
+      margin-top: 2px;
+      font-family: monospace
+    }
+
+    .status-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 99px;
+      flex-shrink: 0
+    }
+
+    .status-pill.on {
+      background: #E8F5E9;
+      color: #2E7D32
+    }
+
+    .status-pill.off {
+      background: #FFF3E0;
+      color: #E65100
+    }
+
+    .pc-actions {
+      border-top: 1px solid var(--border);
+      display: flex
+    }
+
+    .pc-act-btn {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px
+    }
+
+    .pc-act-btn:active {
+      background: var(--bg)
+    }
+
+    .pc-act-btn.edit {
+      color: #1565C0
+    }
+
+    .pc-act-btn.del {
+      color: #C62828
+    }
+
+    .pc-act-div {
+      width: 1px;
+      background: var(--border)
+    }
+
+    /* FORM */
+    #scForm {
+      background: var(--bg)
+    }
+
+    .form-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 100px
+    }
+
+    .fgroup {
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      overflow: hidden
+    }
+
+    .fgroup-title {
+      padding: 10px 14px 0;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    .frow {
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .frow:last-child {
+      border-bottom: none
+    }
+
+    .frow label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted)
+    }
+
+    .frow select,
+    .frow input[type=text],
+    .frow input[type=number] {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      color: var(--text);
+      background: transparent;
+      padding: 2px 0;
+      font-family: inherit
+    }
+
+    .frow .combo {
+      position: relative
+    }
+
+    .frow .combo input {
+      padding-right: 30px
+    }
+
+    .frow .combo .ddown {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: var(--hint);
+      pointer-events: none
+    }
+
+    .sn-row {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .sn-row input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-family: monospace;
+      background: transparent;
+      color: var(--text)
+    }
+
+    .scan-btn {
+      background: var(--tj);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      white-space: nowrap
+    }
+
+    .scan-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff
+    }
+
+    .status-toggle {
+      display: flex;
+      gap: 8px
+    }
+
+    .stgl {
+      flex: 1;
+      padding: 9px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radS);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+      background: #fff;
+      color: var(--muted)
+    }
+
+    .stgl.sel-on {
+      border-color: #2E7D32;
+      background: #E8F5E9;
+      color: #2E7D32
+    }
+
+    .stgl.sel-off {
+      border-color: #E65100;
+      background: #FFF3E0;
+      color: #E65100
+    }
+
+    .photo-area {
+      padding: 12px 14px
+    }
+
+    .photo-preview {
+      width: 100%;
+      height: 130px;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 2px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0
+    }
+
+    .photo-preview svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--hint)
+    }
+
+    .photo-preview span {
+      font-size: 13px;
+      color: var(--hint)
+    }
+
+    .photo-preview input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer
+    }
+
+    .form-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 16px;
+      background: #fff;
+      border-top: 1.5px solid var(--border);
+      display: flex;
+      gap: 10px;
+      z-index: 50
+    }
+
+    .btn-save {
+      flex: 1;
+      padding: 14px;
+      background: var(--tj);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity .15s
+    }
+
+    .btn-save:active {
+      opacity: .85
+    }
+
+    .btn-cancel {
+      padding: 14px 20px;
+      background: #fff;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    /* SCANNER */
+    #scScan {
+      background: #000;
+      justify-content: center;
+      align-items: center
+    }
+
+    .scan-frame {
+      position: relative;
+      width: 100%;
+      max-width: 360px
+    }
+
+    #scanVideo {
+      width: 100%;
+      display: block;
+      border-radius: 12px
+    }
+
+    .scan-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none
+    }
+
+    .scan-box {
+      width: 200px;
+      height: 120px;
+      border: 2px solid var(--tj);
+      border-radius: 10px;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, .5)
+    }
+
+    .scan-corner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: var(--tj);
+      border-style: solid
+    }
+
+    .scan-corner.tl {
+      top: -1px;
+      left: -1px;
+      border-width: 3px 0 0 3px;
+      border-radius: 4px 0 0 0
+    }
+
+    .scan-corner.tr {
+      top: -1px;
+      right: -1px;
+      border-width: 3px 3px 0 0;
+      border-radius: 0 4px 0 0
+    }
+
+    .scan-corner.bl {
+      bottom: -1px;
+      left: -1px;
+      border-width: 0 0 3px 3px;
+      border-radius: 0 0 0 4px
+    }
+
+    .scan-corner.br {
+      bottom: -1px;
+      right: -1px;
+      border-width: 0 3px 3px 0;
+      border-radius: 0 0 4px 0
+    }
+
+    .scan-msg {
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 16px;
+      opacity: .8
+    }
+
+    .scan-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, .2);
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    /* PROFILE MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 200;
+      display: none;
+      align-items: flex-end
+    }
+
+    .modal-overlay.open {
+      display: flex
+    }
+
+    .modal-sheet {
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      padding: 20px 20px 32px;
+      width: 100%
+    }
+
+    .modal-sheet h3 {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 4px
+    }
+
+    .modal-sheet p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px
+    }
+
+    .profile-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--tj);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px
+    }
+
+    .modal-sheet .text-center {
+      text-align: center
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 13px;
+      background: #FFF0F0;
+      color: var(--tj);
+      border: 1.5px solid #FFCDD2;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1A1A18;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 300;
+      opacity: 0;
+      transition: opacity .2s;
+      white-space: nowrap;
+      pointer-events: none
+    }
+
+    .toast.show {
+      opacity: 1
+    }
+
+    /* DROPDOWN OPTIONS */
+    .opt-list {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: -14px;
+      right: -14px;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      z-index: 50;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .1);
+      max-height: 160px;
+      overflow-y: auto
+    }
+
+    .opt-item {
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .opt-item:last-child {
+      border-bottom: none
+    }
+
+    .opt-item:active {
+      background: var(--bg)
+    }
+
+    .opt-item.manual {
+      color: var(--tj);
+      font-weight: 600
+    }
+
+    /* DELETE CONFIRM */
+    #delModal .modal-sheet h3 {
+      color: #C62828
+    }
+
+    .btn-del-confirm {
+      width: 100%;
+      padding: 13px;
+      background: var(--tj);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px
+    }
+
+    .btn-del-cancel {
+      width: 100%;
+      padding: 13px;
+      background: #fff;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--hint)
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      fill: var(--border);
+      margin-bottom: 12px
+    }
+
+    .empty-state p {
+      font-size: 14px
+    }
+
+    .divider {
+      width: 1px;
+      background: rgba(255, 255, 255, .2);
+      margin: 4px 0
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .screen.active .koridor-item,
+    .screen.active .halte-item,
+    .screen.active .perangkat-card {
+      animation: fadeIn .25s ease both
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+  <div class="screen active" id="scLogin">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="logo-box"><svg viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+          </svg></div>
+        <div>
+          <h1>TJ StockOpname</h1><span>TransJakarta Asset Management</span>
+        </div>
+      </div>
+      <div class="field"><label>NIK Pegawai</label><input type="text" id="inpNIK" placeholder="Masukkan NIK"
+          autocomplete="off"></div>
+      <div class="field"><label>Password</label><input type="password" id="inpPass" placeholder="Masukkan password">
+      </div>
+      <button class="btn-login" onclick="doLogin()">Masuk</button>
+      <div class="err-msg" id="errMsg"></div>
+      <p style="font-size:11px;color:var(--hint);text-align:center;margin-top:12px">Demo: NIK apapun / password: tj2024
+      </p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="screen" id="scDash">
+    <div class="dash-header">
+      <div class="dash-top">
+        <div class="user-info">
+          <h2>Selamat datang 👋</h2>
+          <p id="dUserName">—</p>
+        </div>
+        <div class="dash-avatar" id="avatarBtn" onclick="openProfile()"></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="s-val" id="sHalte">0</div>
+          <div class="s-lbl">Total Halte</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-val" id="sPerangkat">0</div>
+          <div class="s-lbl">Total Perangkat</div>
+        </div>
+      </div>
+      <div class="progress-card">
+        <div class="pc-top"><span>Progress Input</span><strong id="sPct">0%</strong></div>
+        <div class="prog-bar">
+          <div class="prog-fill" id="sProg" style="width:0%"></div>
+        </div>
+        <p style="font-size:11px;color:rgba(255,255,255,.65);margin-top:6px"><span id="sInputed">0</span> dari <span
+            id="sTotalH">0</span> halte telah memiliki data</p>
+      </div>
+    </div>
+    <div class="dash-body">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5a6.5 6.5 0 10-6.5 6.5c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        </svg>
+        <input type="text" id="searchInp" placeholder="Cari koridor atau halte…" oninput="filterKoridor()">
+      </div>
+      <div class="sec-title">Daftar Koridor</div>
+      <div class="koridor-list" id="koridorList"></div>
+    </div>
+  </div>
+
+  <!-- KORIDOR -->
+  <div class="screen" id="scKoridor">
+    <div class="topbar">
+      <button class="back-btn" onclick="goBack('scDash')">‹</button>
+      <h2 id="kTitle">Koridor</h2>
+    </div>
+    <div class="halte-list" id="halteList"></div>
+  </div>
+
+  <!-- HALTE -->
+  <div class="screen" id="scHalte">
+    <div class="topbar">
+      <button class="back-btn" id="halteBackBtn">‹</button>
+      <h2 id="hTitle">Halte</h2>
+    </div>
+    <div class="halte-stat-bar">
+      <div class="h-stat">
+        <div class="hv" id="hTotal">0</div>
+        <div class="hl">Total Aset</div>
+      </div>
+      <div class="h-stat-div"></div>
+      <div class="h-stat">
+        <div class="hv on" id="hOn">0</div>
+        <div class="hl">On Service</div>
+      </div>
+      <div class="h-stat-div"></div>
+      <div class="h-stat">
+        <div class="hv off" id="hOff">0</div>
+        <div class="hl">Off Service</div>
+      </div>
+    </div>
+    <div class="fab-area">
+      <button class="fab" onclick="openForm(null)">
+        <svg viewBox="0 0 24 24">
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+        </svg>
+        Tambah Perangkat
+      </button>
+    </div>
+    <div class="perangkat-list" id="perangkatList"></div>
+  </div>
+
+  <!-- FORM INPUT -->
+  <div class="screen" id="scForm">
+    <div class="topbar">
+      <button class="back-btn" onclick="cancelForm()">✕</button>
+      <h2 id="formTitle">Tambah Perangkat</h2>
+    </div>
+    <div class="form-body">
+      <div class="fgroup">
+        <div class="fgroup-title">Informasi Perangkat</div>
+        <div class="frow" style="position:relative">
+          <label>Jenis Perangkat</label>
+          <div class="combo">
+            <input type="text" id="fJenis" placeholder="Pilih atau ketik…" autocomplete="off"
+              oninput="showOpts('jenis',this.value)" onfocus="showOpts('jenis','')">
+            <span class="ddown">▾</span>
+          </div>
+          <div class="opt-list" id="optJenis" style="display:none"></div>
+        </div>
+        <div class="frow" style="position:relative">
+          <label>Nama Perangkat</label>
+          <div class="combo">
+            <input type="text" id="fNama" placeholder="Pilih atau ketik…" autocomplete="off"
+              oninput="showOpts('nama',this.value)" onfocus="showOpts('nama','')">
+            <span class="ddown">▾</span>
+          </div>
+          <div class="opt-list" id="optNama" style="display:none"></div>
+        </div>
+        <div class="frow" style="position:relative">
+          <label>Merk / Model</label>
+          <div class="combo">
+            <input type="text" id="fMerk" placeholder="Pilih atau ketik…" autocomplete="off"
+              oninput="showOpts('merk',this.value)" onfocus="showOpts('merk','')">
+            <span class="ddown">▾</span>
+          </div>
+          <div class="opt-list" id="optMerk" style="display:none"></div>
+        </div>
+      </div>
+      <div class="fgroup">
+        <div class="fgroup-title">Identifikasi</div>
+        <div class="frow">
+          <label>Serial Number</label>
+          <div class="sn-row">
+            <input type="text" id="fSN" placeholder="Ketik atau scan…" style="font-family:monospace;font-size:13px">
+            <button class="scan-btn" onclick="openScanner()">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M2 7H4V5H6V3H2V7ZM2 17H2V21H6V19H4V17H2ZM18 5V3H22V7H20V5H18ZM20 17H22V21H18V19H20V17ZM17 7H7V17H17V7ZM15 15H9V9H15V15ZM11 13H13V11H11V13Z" />
+              </svg>
+              Scan
+            </button>
+          </div>
+        </div>
+        <div class="frow">
+          <label>Status Perangkat</label>
+          <div class="status-toggle">
+            <div class="stgl sel-on" id="stgOn" onclick="setStatus('on')">✓ On Service</div>
+            <div class="stgl" id="stgOff" onclick="setStatus('off')">✗ Off Service</div>
+          </div>
+        </div>
+      </div>
+      <div class="fgroup">
+        <div class="fgroup-title">Foto Perangkat</div>
+        <div class="photo-area">
+          <div class="photo-preview" id="photoPreview" onclick="triggerPhoto()">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4z" />
+              <path
+                d="M9 3L7.17 5H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2h-3.17L15 3H9zm3 15a5 5 0 110-10 5 5 0 010 10z" />
+            </svg>
+            <span id="photoLabel">Ketuk untuk ambil/pilih foto</span>
+            <input type="file" accept="image/*" capture="environment" id="photoInput" onchange="handlePhoto(this)"
+              style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-cancel" onclick="cancelForm()">Batal</button>
+      <button class="btn-save" onclick="savePerangkat()">💾 Simpan Data</button>
+    </div>
+  </div>
+
+  <!-- SCANNER SCREEN -->
+  <div class="screen" id="scScan">
+    <div style="position:relative;width:100%">
+      <div class="scan-frame">
+        <video id="scanVideo" playsinline muted></video>
+        <div class="scan-overlay">
+          <div style="position:relative;display:inline-block">
+            <div class="scan-box"></div>
+            <div class="scan-corner tl"></div>
+            <div class="scan-corner tr"></div>
+            <div class="scan-corner bl"></div>
+            <div class="scan-corner br"></div>
+          </div>
+        </div>
+      </div>
+      <p class="scan-msg">Arahkan kamera ke barcode / QR Code</p>
+      <button class="scan-close" onclick="closeScanner()">✕</button>
+    </div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-sheet">
+      <div class="text-center">
+        <div class="profile-avatar" id="profileAv"></div>
+        <h3 id="profileName">—</h3>
+        <p id="profileNIK">NIK: —</p>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">⎋ Keluar / Logout</button>
+      <button class="btn-del-cancel" onclick="closeProfile()" style="margin-top:8px">Tutup</button>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM -->
+  <div class="modal-overlay" id="delModal">
+    <div class="modal-sheet" id="delSheet">
+      <h3>Hapus Perangkat?</h3>
+      <p id="delDesc">Data perangkat ini akan dihapus permanen.</p>
+      <button class="btn-del-confirm" onclick="confirmDelete()">Ya, Hapus</button>
+      <button class="btn-del-cancel" onclick="closeDelModal()">Batal</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script>
+    const DATA = {
+      users: [{ nik: 'admin', pass: 'tj2024', name: 'Admin TransJakarta' }, { nik: '12345', pass: 'tj2024', name: 'Operator Lapangan' }],
+      koridors: [
+        { id: '1', label: '1', name: 'Blok M – Kota', color: '#E3202B' },
+        { id: '2', label: '2', name: 'Pulogadung – Harmoni', color: '#E3202B' },
+        { id: '3', label: '3', name: 'Pasar Baru – Kalideres', color: '#E3202B' },
+        { id: '4', label: '4', name: 'Pulogadung – Dukuh Atas', color: '#E3202B' },
+        { id: '5', label: '5', name: 'Kampung Melayu – Ancol', color: '#E3202B' },
+        { id: '6', label: '6', name: 'Ragunan – Dukuh Atas', color: '#E3202B' },
+        { id: '7', label: '7', name: 'Kampung Rambutan – Kampung Melayu', color: '#E3202B' },
+        { id: '8', label: '8', name: 'Lebak Bulus – Harmoni', color: '#E3202B' },
+        { id: '9', label: '9', name: 'Pinang Ranti – Pluit', color: '#E3202B' },
+        { id: '10', label: '10', name: 'Tanjung Priok – Cililitan', color: '#E3202B' },
+      ],
+      haltes: {
+        '1': ['Blok M', 'Masjid Agung', 'Bundaran Senayan', 'Gelora Bung Karno', 'Polda Metro Jaya', 'Karet', 'Dukuh Atas', 'Tosari', 'Bundaran HI', 'Sarinah', 'Monas', 'Harmoni', 'Sawah Besar', 'Mangga Besar', 'Olimo', 'Glodok', 'Kota'],
+        '2': ['Pulogadung', 'Bermis', 'Penggilingan', 'Cakung', 'Rawa Terate', 'Jelambar', 'Grogol', 'Slipi Petamburan', 'Harmoni'],
+        '3': ['Pasar Baru', 'Budi Kemuliaan', 'Cideng', 'Tanah Abang', 'Slipi Kemanggisan', 'Jelambar', 'Kalideres'],
+        '4': ['Pulogadung', 'Rawamangun', 'Utan Kayu', 'Pasar Rumput', 'Dukuh Atas'],
+        '5': ['Kampung Melayu', 'Bidaracina', 'Cipinang Besar', 'Pulomas', 'Ancol'],
+        '6': ['Ragunan', 'Duren Barat', 'Buncit Indah', 'Warung Jati', 'Pejaten', 'Pancoran', 'Cikoko', 'Cawang', 'Dukuh Atas'],
+        '7': ['Kampung Rambutan', 'Cijantung', 'Cililitan', 'Otista', 'Kampung Melayu'],
+        '8': ['Lebak Bulus', 'Pondok Indah', 'Puri Mutiara', 'Permata Hijau', 'Harmoni'],
+        '9': ['Pinang Ranti', 'Cawang', 'Manggarai', 'Matraman', 'Pluit'],
+        '10': ['Tanjung Priok', 'Warakas', 'Plumpang', 'Rawa Badak', 'Papanggo', 'Cililitan'],
+      }
+    };
+    const JENIS_OPTS = ['CCTV', 'DVR/NVR', 'Panel Informasi', 'Mesin Tap', 'Display LED', 'Speaker/PA', 'Sensor Pintu', 'Komputer/PC', 'Router/Switch', 'UPS', 'HVAC Controller', 'Gate Barrier'];
+    const NAMA_OPTS = ['CCTV Outdoor', 'CCTV Indoor', 'DVR 16 Channel', 'NVR IP Camera', 'TVM (Ticket Vending)', 'E-Gate', 'Running Text', 'Video Wall', 'Interphone', 'ACS Controller'];
+    const MERK_OPTS = ['Hikvision', 'Dahua', 'Samsung', 'Panasonic', 'Sony', 'Axis', 'Bosch', 'Hanwha', 'Uniview', 'TVT Digital', 'ZKTeco', 'Suprema'];
+
+    let state = { user: null, curKoridor: null, curHalte: null, formStatus: 'on', formPhoto: null, editId: null, deleteId: null, scanStream: null };
+    let perangkatDB = JSON.parse(localStorage.getItem('tjDB') || '{}');
+
+    function saveDB() { localStorage.setItem('tjDB', JSON.stringify(perangkatDB)) }
+    function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active') }
+    function toast(msg, dur = 2000) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), dur) }
+
+    function doLogin() {
+      const nik = document.getElementById('inpNIK').value.trim();
+      const pass = document.getElementById('inpPass').value;
+      const u = DATA.users.find(x => x.nik === nik && x.pass === pass) || (pass === 'tj2024' ? { nik, name: 'Operator ' + nik } : null);
+      if (!u) { document.getElementById('errMsg').textContent = 'NIK atau password salah'; return }
+      state.user = u;
+      document.getElementById('errMsg').textContent = '';
+      renderDash(); show('scDash');
+    }
+
+    function renderDash() {
+      const u = state.user;
+      document.getElementById('dUserName').textContent = u.name + ' · ' + u.nik;
+      const init = u.name.charAt(0).toUpperCase();
+      document.getElementById('avatarBtn').textContent = init;
+      document.getElementById('profileAv').textContent = init;
+      document.getElementById('profileName').textContent = u.name;
+      document.getElementById('profileNIK').textContent = 'NIK: ' + u.nik;
+      let totalH = 0, withData = 0, totalP = 0;
+      DATA.koridors.forEach(k => { (DATA.haltes[k.id] || []).forEach(h => { totalH++; const key = k.id + '_' + h; const arr = perangkatDB[key] || []; totalP += arr.length; if (arr.length > 0) withData++; }) });
+      document.getElementById('sHalte').textContent = totalH;
+      document.getElementById('sPerangkat').textContent = totalP;
+      document.getElementById('sTotalH').textContent = totalH;
+      document.getElementById('sInputed').textContent = withData;
+      const pct = totalH ? Math.round(withData / totalH * 100) : 0;
+      document.getElementById('sPct').textContent = pct + '%';
+      document.getElementById('sProg').style.width = pct + '%';
+      renderKoridorList('');
+    }
+
+    function renderKoridorList(q) {
+      const list = document.getElementById('koridorList');
+      q = q.toLowerCase();
+      const items = DATA.koridors.filter(k => !q || k.name.toLowerCase().includes(q) || ('koridor ' + k.label).includes(q));
+      list.innerHTML = items.map(k => {
+        const haltes = DATA.haltes[k.id] || [];
+        let count = 0; haltes.forEach(h => { count += (perangkatDB[k.id + '_' + h] || []).length; });
+        return `<div class="koridor-item" onclick="openKoridor('${k.id}')">
+      <div class="koridor-num">${k.label}</div>
+      <div class="koridor-info"><h3>${k.name}</h3><p>${haltes.length} halte · ${count} perangkat</p></div>
+      <span class="koridor-arrow">›</span>
+    </div>`;
+      }).join('') || '<div class="empty-state"><p>Tidak ditemukan</p></div>';
+    }
+
+    function filterKoridor() { renderKoridorList(document.getElementById('searchInp').value) }
+
+    function openKoridor(id) {
+      const k = DATA.koridors.find(x => x.id === id);
+      state.curKoridor = k;
+      document.getElementById('kTitle').textContent = 'Koridor ' + k.label + ' – ' + k.name;
+      const haltes = DATA.haltes[id] || [];
+      document.getElementById('halteList').innerHTML = haltes.map(h => {
+        const arr = perangkatDB[id + '_' + h] || [];
+        return `<div class="halte-item" onclick="openHalte('${id}','${h}')">
+      <div class="halte-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+      <div class="halte-info"><h3>${h}</h3><p>${arr.length} perangkat tercatat</p></div>
+      <div class="halte-badge">${arr.length}</div>
+    </div>`;
+      }).join('');
+      show('scKoridor');
+    }
+
+    function openHalte(koridorId, halteName) {
+      state.curHalte = { koridorId, halteName };
+      document.getElementById('hTitle').textContent = halteName;
+      document.getElementById('halteBackBtn').onclick = () => show('scKoridor');
+      renderHalte();
+      show('scHalte');
+    }
+
+    function renderHalte() {
+      const { koridorId, halteName } = state.curHalte;
+      const key = koridorId + '_' + halteName;
+      const arr = perangkatDB[key] || [];
+      const on = arr.filter(x => x.status === 'on').length;
+      document.getElementById('hTotal').textContent = arr.length;
+      document.getElementById('hOn').textContent = on;
+      document.getElementById('hOff').textContent = arr.length - on;
+      const list = document.getElementById('perangkatList');
+      if (!arr.length) { list.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.54 15.46 0 12.33 0c-1.65 0-3.12.72-4.13 1.86L6 4 4.67 2.67 3.5 3.84 20.16 20.5 21.33 19.33 20 18V6zm-8 11a3 3 0 01-3-3c0-.35.07-.68.18-1h-1.7L4 9.46V18c0 1.1.9 2 2 2h10.54l-2-2H12zm8-3.46V8h-7.92l7.92 7.92V13.54z"/></svg><p>Belum ada perangkat.<br>Ketuk "+ Tambah" untuk mulai.</p></div>'; return; }
+      list.innerHTML = arr.map((p, i) => {
+        const photoEl = p.photo ? `<img src="${p.photo}" alt="foto">` : `<svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>`;
+        return `<div class="perangkat-card">
+      <div class="pc-main">
+        <div class="pc-photo">${photoEl}</div>
+        <div class="pc-info">
+          <div class="pname">${p.nama || p.jenis || 'Perangkat'}</div>
+          <div class="psub">${p.jenis} · ${p.merk}</div>
+          <div class="psn">S/N: ${p.sn || '—'}</div>
+        </div>
+        <div class="status-pill ${p.status === 'on' ? 'on' : 'off'}">${p.status === 'on' ? 'On' : 'Off'}</div>
+      </div>
+      <div class="pc-actions">
+        <button class="pc-act-btn edit" onclick="openForm(${i})">✎ Edit</button>
+        <div class="pc-act-div"></div>
+        <button class="pc-act-btn del" onclick="openDelModal(${i})">🗑 Hapus</button>
+      </div>
+    </div>`;
+      }).join('');
+    }
+
+    function openForm(idx) {
+      state.editId = idx;
+      state.formPhoto = null;
+      document.getElementById('formTitle').textContent = idx === null ? 'Tambah Perangkat' : 'Edit Perangkat';
+      const { koridorId, halteName } = state.curHalte;
+      const key = koridorId + '_' + halteName;
+      const arr = perangkatDB[key] || [];
+      if (idx !== null && arr[idx]) {
+        const p = arr[idx];
+        document.getElementById('fJenis').value = p.jenis || '';
+        document.getElementById('fNama').value = p.nama || '';
+        document.getElementById('fMerk').value = p.merk || '';
+        document.getElementById('fSN').value = p.sn || '';
+        setStatus(p.status || 'on');
+        state.formPhoto = p.photo || null;
+      } else {
+        document.getElementById('fJenis').value = '';
+        document.getElementById('fNama').value = '';
+        document.getElementById('fMerk').value = '';
+        document.getElementById('fSN').value = '';
+        setStatus('on');
+        document.getElementById('photoInput').value = '';
+      }
+      updatePhotoPreview();
+      show('scForm');
+    }
+
+    function cancelForm() { show('scHalte') }
+
+    function setStatus(s) {
+      state.formStatus = s;
+      document.getElementById('stgOn').className = 'stgl' + (s === 'on' ? ' sel-on' : '');
+      document.getElementById('stgOff').className = 'stgl' + (s === 'off' ? ' sel-off' : '');
+    }
+
+    function savePerangkat() {
+      const jenis = document.getElementById('fJenis').value.trim();
+      const nama = document.getElementById('fNama').value.trim();
+      const merk = document.getElementById('fMerk').value.trim();
+      const sn = document.getElementById('fSN').value.trim();
+      if (!jenis) { toast('Pilih jenis perangkat dulu'); return; }
+      const { koridorId, halteName } = state.curHalte;
+      const key = koridorId + '_' + halteName;
+      if (!perangkatDB[key]) perangkatDB[key] = [];
+      const obj = { jenis, nama, merk, sn, status: state.formStatus, photo: state.formPhoto, ts: Date.now() };
+      if (state.editId !== null) { perangkatDB[key][state.editId] = obj; }
+      else { perangkatDB[key].push(obj); }
+      saveDB();
+      toast(state.editId !== null ? 'Data diperbarui ✓' : 'Perangkat ditambahkan ✓');
+      renderHalte();
+      renderDash();
+      show('scHalte');
+    }
+
+    function openDelModal(i) { state.deleteId = i; document.getElementById('delModal').classList.add('open') }
+    function closeDelModal() { document.getElementById('delModal').classList.remove('open') }
+    function confirmDelete() {
+      const { koridorId, halteName } = state.curHalte;
+      const key = koridorId + '_' + halteName;
+      perangkatDB[key].splice(state.deleteId, 1);
+      saveDB(); closeDelModal(); renderHalte(); renderDash(); toast('Perangkat dihapus');
+    }
+
+    function triggerPhoto() { document.getElementById('photoInput').click() }
+    function handlePhoto(inp) {
+      if (!inp.files || !inp.files[0]) return;
+      const reader = new FileReader();
+      const img = new Image();
+      reader.onload = e => {
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const max = 800; let w = img.width, h = img.height;
+          if (w > max) { h = h * max / w; w = max; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          state.formPhoto = canvas.toDataURL('image/jpeg', 0.65);
+          updatePhotoPreview(); toast('Foto siap (dikompresi) ✓');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(inp.files[0]);
+    }
+    function updatePhotoPreview() {
+      const prev = document.getElementById('photoPreview');
+      const lbl = document.getElementById('photoLabel');
+      if (state.formPhoto) {
+        let img = prev.querySelector('img');
+        if (!img) { img = document.createElement('img'); prev.appendChild(img); }
+        img.src = state.formPhoto;
+        img.style.display = 'block';
+        lbl.style.display = 'none';
+        prev.querySelector('svg').style.display = 'none';
+      } else {
+        const img = prev.querySelector('img'); if (img) img.style.display = 'none';
+        lbl.style.display = '';
+        prev.querySelector('svg').style.display = '';
+      }
+    }
+
+    // DROPDOWN
+    function showOpts(type, val) {
+      const map = { jenis: { el: 'optJenis', inp: 'fJenis', opts: JENIS_OPTS }, nama: { el: 'optNama', inp: 'fNama', opts: NAMA_OPTS }, merk: { el: 'optMerk', inp: 'fMerk', opts: MERK_OPTS } };
+      const { el, opts } = map[type]; const box = document.getElementById(el);
+      const filtered = opts.filter(o => !val || o.toLowerCase().includes(val.toLowerCase()));
+      box.innerHTML = filtered.map(o => `<div class="opt-item" onmousedown="pickOpt('${type}','${o}')">${o}</div>`).join('') +
+        (val && !opts.find(o => o.toLowerCase() === val.toLowerCase()) ? `<div class="opt-item manual" onmousedown="pickOpt('${type}','${val}')">+ Gunakan "${val}"</div>` : '');
+      box.style.display = filtered.length || val ? 'block' : 'none';
+      ['jenis', 'nama', 'merk'].forEach(t => { if (t !== type) document.getElementById(map[t].el).style.display = 'none'; });
+    }
+    function pickOpt(type, val) {
+      const ids = { jenis: 'fJenis', nama: 'fNama', merk: 'fMerk' };
+      document.getElementById(ids[type]).value = val;
+      setTimeout(() => { document.getElementById({ jenis: 'optJenis', nama: 'optNama', merk: 'optMerk' }[type]).style.display = 'none'; }, 100);
+    }
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.combo') && !e.target.closest('.opt-list')) {
+        ['optJenis', 'optNama', 'optMerk'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      }
+    });
+
+    // SCANNER
+    function openScanner() {
+      show('scScan');
+      const v = document.getElementById('scanVideo');
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(stream => {
+        state.scanStream = stream; v.srcObject = stream; v.play();
+        requestAnimationFrame(scanFrame);
+      }).catch(() => { toast('Kamera tidak tersedia'); show('scForm'); });
+    }
+    function scanFrame() {
+      const v = document.getElementById('scanVideo');
+      if (!state.scanStream) return;
+      if (v.readyState === v.HAVE_ENOUGH_DATA) {
+        const c = document.createElement('canvas'); c.width = v.videoWidth; c.height = v.videoHeight;
+        const ctx = c.getContext('2d'); ctx.drawImage(v, 0, 0);
+        const img = ctx.getImageData(0, 0, c.width, c.height);
+        const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
+        if (code) { document.getElementById('fSN').value = code.data; closeScanner(); toast('Barcode terdeteksi ✓'); return; }
+      }
+      requestAnimationFrame(scanFrame);
+    }
+    function closeScanner() {
+      if (state.scanStream) { state.scanStream.getTracks().forEach(t => t.stop()); state.scanStream = null; }
+      show('scForm');
+    }
+
+    function openProfile() { document.getElementById('profileModal').classList.add('open') }
+    function closeProfile() { document.getElementById('profileModal').classList.remove('open') }
+    function doLogout() {
+      closeProfile(); state.user = null;
+      document.getElementById('inpNIK').value = ''; document.getElementById('inpPass').value = '';
+      show('scLogin');
+    }
+
+    function goBack(id) { show(id) }
+    document.addEventListener('keydown', e => { if (e.key === 'Enter' && document.getElementById('scLogin').classList.contains('active')) doLogin(); });
+  </script>
+</body>
+
+</html>
